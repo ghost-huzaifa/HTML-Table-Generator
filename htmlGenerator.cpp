@@ -1,12 +1,30 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 using namespace std;
 
+vector<vector<string>> getData();
 string getHeader();
 string getBody(vector<vector<string>> data);
 string getFooter();
+void writeHTMLfile(string outputString);
 
 int main()
+{
+    vector<vector<string>> data = getData();
+
+    string outputString = "";
+    outputString += getHeader();
+    outputString += getBody(data);
+    outputString += getFooter();
+
+    cout << outputString;
+    writeHTMLfile(outputString);
+
+    return 0;
+}
+
+vector<vector<string>> getData()
 {
     int rows = 0,
         cols = 0;
@@ -15,10 +33,12 @@ int main()
     cout << "Enter Columns:";
     cin >> cols;
 
-    vector<vector<string>> data = {{0}};
+    vector<vector<string>> data;
+    data.resize(rows);
 
     for (int i = 0; i < rows; i++)
     {
+        data[i].resize(cols);
         for (int j = 0; j < cols; j++)
         {
             string entryData = "";
@@ -28,12 +48,7 @@ int main()
         }
     }
 
-    string outputString = "";
-    outputString += getHeader();
-    outputString += getBody(data);
-    outputString += getFooter();
-
-    return 0;
+    return data;
 }
 
 string getHeader()
@@ -74,9 +89,12 @@ string getBody(vector<vector<string>> data)
         body += "<tr>\n";
         for (int j = 0; j < data[i].size(); j++)
         {
-            body += "<td>\n";
-            body += data[i][j];
-            body += "</td>\n";
+            if (data[i][j] != "")
+            {
+                body += "<td>\n";
+                body += data[i][j];
+                body += "</td>\n";
+            }
         }
         body += "</tr>\n";
     }
@@ -89,4 +107,12 @@ string getBody(vector<vector<string>> data)
 string getFooter()
 {
     return "</html>\n";
+}
+
+void writeHTMLfile(string outputString)
+{
+    ofstream file;
+    file.open("/home/huzaifa/Desktop/table.html");
+    file << outputString;
+    file.close();
 }
